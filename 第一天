@@ -1,0 +1,21 @@
+第一天
+
+http://baike.baidu.com/link?url=oHFwSjkeETko_hC_Su-zeAdZWeBQ6dZLkI9htzZ13aCi-BtFPGyuNBdO3B4xcyvEq9ebtjXacZQa4rVrhk2mWq
+Node.js是一个基于Chrome JavaScript运行时建立的平台， 用于方便地搭建响应速度快、易于扩展的网络应用。Node.js 使用事件驱动， 非阻塞I/O 模型而得以轻量和高效，非常适合在分布式设备上运行数据密集型的实时应用。
+
+学习资料：Node 入门 http://www.nodebeginner.org/index-zh-cn.html#javascript-and-nodejs
+学习资料：Node.JS教程 http://www.runoob.com/nodejs/nodejs-tutorial.html
+
+下载安装Node.JS （以Windows为例）
+https://nodejs.org/en/download/
+
+第一个Node.js程序：Hello World！
+
+以下是我们的第一个Node.js程序：
+
+console.log("Hello World");
+
+保存该文件，文件名为 helloworld.js， 并通过 node命令来执行：
+node helloworld.js
+程序执行后，正常的话，就会在终端输出 Hello World。
+

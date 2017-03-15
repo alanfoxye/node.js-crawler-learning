@@ -33,7 +33,7 @@ npm install cheerio
 npm install request
 
 安装完毕后在E:\node_crawl文件夹中多了一个node_modules文件夹
-在此文件夹中创建一个first_crawler.js文本文件，用任意喜欢的编辑器编辑
+在此文件夹中创建一个crawler1.js文本文件，用任意喜欢的编辑器编辑
 
 /* 2017.3.15 Node.JS crawler by alanfoxye*/
 
@@ -58,7 +58,7 @@ request(myURL, function (err, res, body) {
     console.log($.html());    
 })
 
-编辑后在dos窗口执行node first_crawler.js之后可以看到输出的页面html源码：
+编辑后在dos窗口执行node crawler1.js之后可以看到输出的页面html源码：
 
 
 <!DOCTYPE html>

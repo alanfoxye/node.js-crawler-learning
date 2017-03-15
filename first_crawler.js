@@ -1,10 +1,10 @@
-/* 2017.3.15 Node.JSÅÀ³æ by ÍõêÊ*/
+/* 2017.3.15 Node.JS Crawler by alanfoxye*/
 
 var myRequest = require('request')
 var myCheerio = require('cheerio')
 var myURL = 'http://e.icis-china.com/news/detail?id=1161&typeid=15'
 
-//requestÄ£¿éÒì²½fetch url
+//requestÃ„Â£Â¿Ã©Ã’Ã¬Â²Â½fetch url
 function request(url, callback) {
     var options = {
         url: url,

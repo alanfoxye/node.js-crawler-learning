@@ -1,0 +1,17 @@
+Node.JS 细节学习请自行参照第一天的参考读物
+
+用Cheerio和Request做一个最简单的爬虫。我们以ICIS安迅思网站为例，爬这样一篇文章：
+http://e.icis-china.com/news/detail?id=1160&typeid=15
+
+Cheerio是一个Node.js的模块库， 它可以从html的片断中构建DOM结构，然后提供像jquery一样的css选择器查询。
+https://cnodejs.org/topic/5203a71844e76d216a727d2e
+Request也是一个Node.js的模块库，可以轻松地完成http请求。
+http://www.open-open.com/lib/view/open1435301679966.html
+
+首先我们创建一个文件夹用于爬虫项目，我在Windows机器上安装了node后，创建E:\node_crawl文件夹
+在管理员权限的dos窗口下进入E:\node_crawl文件夹，安装这两个模块：
+npm install cheerio
+npm install request
+
+安装完毕后在E:\node_crawl文件夹中多了一个node_modules文件夹
+在此文件夹中创建一个first_crawler.js文本文件，用任意喜欢的编辑器编辑

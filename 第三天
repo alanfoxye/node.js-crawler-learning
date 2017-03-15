@@ -1,0 +1,81 @@
+第三天
+
+再来看一个例子 ： 华夏化工网，看这个新闻：http://www.hxchem.net/newsdetail167887.html
+
+具体页面源码可以用浏览器打开后右键点击页面查看源代码，看见<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />说明该网站采用gb2312编码，而不是UTF-8。
+
+主要信息部分在：
+    <div class="ad_content ad_content2">
+   	  <dl class="hq_contet">
+        	<dt>欧盟批准16/17年度进一步出口70万吨糖</dt>
+            <dd class="hq_date">2017-03-14</dd>		
+            <dd>  <p>　　3月14日消息，法国农业部在一份声明中称，欧盟已经批准在2016/17年度配额外多出口70万吨糖。</p><br />
+<br><br />
+<p>　　欧盟委员会一发言人证实了该决定，称将于周六在欧盟的官方公报中公布，出口许可的申请将在下周提出。</p><br />
+<br><br />
+<p>　　法国农业部称，欧盟于2月28日批准了65万吨糖出口许可，本年度总计达到135万吨。</p><br />
+<br><br />
+<p>　　法国将可以额外出口17.5万吨糖，本年度可出口糖数量为31.5万吨。</p> </dd>
+
+我们可以使用node.js另一个模块iconv来修改，此外我们还想得到每次爬取新闻的时间，可以引入node.js另一个模块date-utils
+先在e:\node_crawl文件夹中执行npm install iconv-lite 和 npm install date-utils
+
+再创建crawler3.js如下：
+
+/* 2017.3.15 Node.JS crawler by alanfoxye*/
+
+var myRequest = require('request')
+var myCheerio = require('cheerio')
+var myIconv = require('iconv-lite')
+var myEncoding = "gb2312"
+require('date-utils');
+var myURL = 'http://www.hxchem.net/newsdetail167887.html'
+
+//防止网站屏蔽我们的爬虫
+var headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36'
+}
+
+
+//request module fetching url
+function request(url, callback) {
+    var options = {
+        url: url,
+        encoding: null,
+        //proxy: 'http://x.x.x.x:8080',
+        headers: headers
+    }
+    myRequest(options, callback)
+}
+
+
+request(myURL, function (err, res, body) {
+    var html = myIconv.decode(body, myEncoding);
+    //console.log(html);
+    var $ = myCheerio.load(html, { decodeEntities: true });
+    console.log("encoding: " + myEncoding);
+    console.log("keywords: " + $('meta[name="keywords"]').eq(1).attr("content"));
+    console.log("title: " + $('.hq_contet>dt').text());
+    console.log("date: " + $('.hq_date').text());
+    //console.log("browse: null");
+    console.log("author: 华夏化工网");
+    console.log("content: " + $('.hq_contet>dd').eq(1).text());
+    console.log("crawltime: " + new Date().toFormat("YYYY-MM-DD HH24:MI:SS"));
+    //console.log($('.editor').html())
+})
+
+dos窗口执行 node crawler.js 获得结果：
+
+E:\node_crawl>node 2.js
+encoding: gb2312
+keywords: undefined
+title: 欧盟批准16/17年度进一步出口70万吨糖
+date: 2017-03-14
+author: 华夏化工网
+content:   　　3月14日消息，法国农业部在一份声明中称，欧盟已经批准在2016/17年度配额外多出口70万吨糖。
+　　欧盟委员会一发言人证实了该决定，称将于周六在欧盟的官方公报中公布，出口许可的申请将在下周提出。
+　　法国农业部称，欧盟于2月28日批准了65万吨糖出口许可，本年度总计达到135万吨。
+　　法国将可以额外出口17.5万吨糖，本年度可出口糖数量为31.5万吨。
+crawltime: 2017-03-15 14:50:51
+
+E:\node_crawl>

@@ -4,7 +4,7 @@ var myRequest = require('request')
 var myCheerio = require('cheerio')
 var myURL = 'http://e.icis-china.com/news/detail?id=1161&typeid=15'
 
-//requestÄ£¿éÒì²½fetch url
+//request module fetching url
 function request(url, callback) {
     var options = {
         url: url,

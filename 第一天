@@ -19,3 +19,1077 @@ console.log("Hello World");
 node helloworld.js
 程序执行后，正常的话，就会在终端输出 Hello World。
 
+那我们开始用Cheerio和Request做一个最简单的爬虫。我们以ICIS安迅思网站为例，爬这样一篇文章：
+http://e.icis-china.com/news/detail?id=1160&typeid=15
+
+Cheerio是一个Node.js的模块库， 它可以从html的片断中构建DOM结构，然后提供像jquery一样的css选择器查询。
+https://cnodejs.org/topic/5203a71844e76d216a727d2e
+Request也是一个Node.js的模块库，可以轻松地完成http请求。
+http://www.open-open.com/lib/view/open1435301679966.html
+
+首先我们创建一个文件夹用于爬虫项目，我在Windows机器上安装了node后，创建E:\node_crawl文件夹
+在管理员权限的dos窗口下进入E:\node_crawl文件夹，安装这两个模块：
+npm install cheerio
+npm install request
+
+安装完毕后在E:\node_crawl文件夹中多了一个node_modules文件夹
+在此文件夹中创建一个first_crawler.js文本文件，用任意喜欢的编辑器编辑
+
+/* 2017.3.15 Node.JS crawler by alanfoxye*/
+
+var myRequest = require('request')
+var myCheerio = require('cheerio')
+var myURL = 'http://e.icis-china.com/news/detail?id=1160&typeid=15'
+
+//request module fetching url
+function request(url, callback) {
+    var options = {
+        url: url,
+        encoding: null,        
+        //proxy: 'http://x.x.x.x:8080',
+        headers: null
+    }
+    myRequest(options, callback)
+}
+
+request(myURL, function (err, res, body) {
+    var html = body;  
+    var $ = myCheerio.load(html, { decodeEntities: false });
+    console.log($.html());    
+})
+
+编辑后在dos窗口执行node first_crawler.js之后可以看到输出的页面html源码：
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
+    <title>3月检修集中暂时缓解过剩 但下半年市场压力仍将加剧 - ICIS安迅思</title>
+    <meta name="keywords" content="炼厂,ICIS,安迅思" />
+    <meta name="description" />
+    <link href="/assets/cn/css/common?v=YiEzmKPuzGME0AKTqWAQfgTl1TTMcf4K23iEGZLXSik1" rel="stylesheet"/>
+
+</head>
+
+<body>
+
+    <div>
+        
+
+
+<div id="header" class="pc">
+    <div class="top">
+        <div class="main clear-both">
+            <ul id="user_id" data-id="asd">
+                <li class="old-site"><a href="http://www.icis-china.com/Chemease/information/default.aspx" target="_blank"><img src="/assets/cn/images/index/top_icon_1.png" />安迅思化工网站</a></li>
+                <li class="old-site"><a href="http://www.icis-china.com/C1/common/entry.aspx" target="_blank"><img src="/assets/cn/images/index/top_icon_2.png" />安迅思能源网站</a></li>
+                    <li class="one"><a href="/login">登录</a><a href="/login/register">注册</a></li>
+
+                <li class="three">
+                    <div class="search J-search-ico">
+                        <a href="javascript:;" class="search-ico" style="margin-right: 2px;margin-bottom: 2px;"></a>搜索
+                    </div>
+                    <a href="http://www.icis.com/" class="lang" target="_blank" style="margin-bottom:4px;">GLOBAL</a>
+                    <div class="cart J-cart">
+                        <a href="javascript:;" onclick="choose()" class="cart-btn"><i></i>购物车<span class="J-cart-num">0</span>件</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+        <div class="main clear-both">
+            <h1 class="logo fl"><a href="/">ICIS</a></h1>
+            <div class="nav fr">
+                <ul class="clear-both">
+                    <li class="ot">
+                        <div class="nav-title"><a href="/">首页</a></div>
+                    </li>
+                    <li class="ot">
+                        <div class="nav-title"><a>化工</a></div>
+                        <div class="nav-list">
+                            <div class="main clear-both">
+                                <div class="item1 item">
+                                    <h2>服务平台</h2>
+                                    <div class="item-cont">
+                                        <span><a href="/product/dashboard">Dashboard</a></span>
+                                        <span><a href="/product/app">掌握商机APP</a></span>
+                                        <span><a href="http://www.icis-china.com/Chemease/information/default.aspx" target="_blank">安迅思化工网站</a></span>
+                                        <span><a href="http://www.icis-china.com/C1/common/entry.aspx" target="_blank">安迅思能源网站</a></span>
+                                    </div>
+                                </div>
+                                <div class="item2 item">
+                                    <h2>产业链</h2>
+                                    <div class="item-cont">
+                                                <span><a href="/chemical?typeid=98">烯烃</a></span>
+                                                <span><a href="/chemical?typeid=103">聚烯烃</a></span>
+                                                <span><a href="/chemical?typeid=89">芳烃</a></span>
+                                                <span><a href="/chemical?typeid=88">苯乙烯及其下游</a></span>
+                                                <span><a href="/chemical?typeid=93">甲醇</a></span>
+                                                <span><a href="/chemical?typeid=102">化纤</a></span>
+                                                <span><a href="/chemical?typeid=92">酚酮</a></span>
+                                                <span><a href="/chemical?typeid=101">冰醋酸及其下游</a></span>
+                                                <span><a href="/chemical?typeid=100">增塑剂及其上游</a></span>
+                                                <span><a href="/chemical?typeid=99">橡胶</a></span>
+                                                <span><a href="/chemical?typeid=90">丙烯酸及酯</a></span>
+                                                <span><a href="/chemical?typeid=95">聚氨酯</a></span>
+                                        <span class="b-link"><a href="/about/experts">查看安迅思专家团队>></a></span>
+                                    </div>
+                                </div>
+                                <div class="item3 item">
+                                    <h2>新闻中心</h2>
+                                    <div class="item-cont">
+                                        <span><a href="/news">市场洞察</a></span>
+                                        <span><a href="/news/media">媒体报道</a></span>
+                                        <span><a href="/news/trends">安迅思动态</a></span>
+                                        <span><a href="/news/activity">行业活动</a></span>
+                                    </div>
+                                </div>
+                                <div class="item4 item">
+                                    <a href="http://e.icis-china.com/report/year">
+                                        <div class="image">
+                                            <img src="/assets/uploads/20161201/2016120113074766379.jpg" alt="" />
+                                            <div class="opac">
+                                                <div class="text">安迅思推出《中国化工市场系列年报 2016-2017》，产品覆盖石化原料、化肥、橡胶助剂行业在内的几十种大宗化工品。报告全面回顾行业格局变化和产能变化，彻底还原全年行业动态......</div>
+                                            </div>
+                                        </div>
+                                        <div class="text">
+                                            <h2>安迅思化工市场系列年报 2016-2017</h2>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="ot">
+                        <div class="nav-title"><a>能源</a></div>
+                        <div class="nav-list">
+                            <div class="main clear-both">
+                                <div class="item1 item">
+                                    <h2>服务平台</h2>
+                                    <div class="item-cont">
+                                        <span><a href="/product/dashboard">Dashboard</a></span>
+                                        <span><a href="/product/app">掌握商机APP</a></span>
+                                        <span><a href="http://www.icis-china.com/Chemease/information/default.aspx" target="_blank">安迅思化工网站</a></span>
+                                        <span><a href="http://www.icis-china.com/C1/common/entry.aspx" target="_blank">安迅思能源网站</a></span>
+                                    </div>
+                                </div>
+                                <div class="item2 item">
+                                    <h2>产业链</h2>
+                                    <div class="item-cont">
+                                                <span><a href="/energy?typeid=33">原油及炼厂</a></span>
+                                                <span><a href="/energy?typeid=24">成品油</a></span>
+                                                <span><a href="/energy?typeid=25">调油品</a></span>
+                                                <span><a href="/energy?typeid=15">天然气/液化天然气</a></span>
+                                                <span><a href="/energy?typeid=27">基础油</a></span>
+                                                <span><a href="/energy?typeid=22">液化石油气</a></span>
+                                                <span><a href="/energy?typeid=28">沥青</a></span>
+                                                <span><a href="/energy?typeid=29">燃料油及船供油</a></span>
+                                                <span><a href="/energy?typeid=32">橡胶油</a></span>
+                                                <span><a href="/energy?typeid=31">石油焦</a></span>
+                                                <span><a href="/energy?typeid=30">溶剂油</a></span>
+                                                <span><a href="/energy?typeid=35">动力煤</a></span>
+                                                <span><a href="/energy?typeid=23">碳排放</a></span>
+                                        <span class="b-link"><a href="/about/experts">查看安迅思专家团队>></a></span>
+                                    </div>
+                                </div>
+                                <div class="item3 item">
+                                    <h2>新闻中心</h2>
+                                    <div class="item-cont">
+                                        <span><a href="/news">市场洞察</a></span>
+                                        <span><a href="/news/media">媒体报道</a></span>
+                                        <span><a href="/news/trends">安迅思动态</a></span>
+                                        <span><a href="/news/activity">行业活动</a></span>
+                                    </div>
+                                </div>
+                                <div class="item4 item">
+                                    <a href="http://e.icis-china.com/report/year">
+                                        <div class="image">
+                                            <img src="/assets/uploads/20161201/2016120113115688981.jpg" alt="" />
+                                            <div class="opac">
+                                                <div class="text">安迅思基于长达 15 年的中国石油市场研究经验和专业观察，推出最新一期《安迅思能源系列年报 2016-2017》，深入分析 2017 年中国石油市场的重要转变、&quot;十三五&quot;规划（2016-2020）及中长期的市场新机遇和新挑战......</div>
+                                            </div>
+                                        </div>
+                                        <div class="text">
+                                            <h2>安迅思能源市场系列年报 2016-2017</h2>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="ot">
+                        <div class="nav-title"><a>产品和服务</a></div>
+                        <div class="nav-list nav-product">
+                            <div class="main clear-both">
+                                <div class="item1 item">
+                                    <div class="wrap1 wrap">
+                                        <h2>资讯</h2>
+                                        <div class="item-cont">
+                                            <span><a href="/information/chemicals">化工资讯</a></span>
+                                            <span><a href="/information/energy">能源资讯</a></span>
+                                            <span><a href="/information/global">国际资讯</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="wrap2 wrap">
+                                        <h2>报告</h2>
+                                        <div class="item-cont">
+                                            <span><a href="/report/">常规报告</a></span>
+                                            <span><a href="/report/year">年度报告</a></span>
+                                            <span><a href="/report/special">专题报告</a></span>
+                                            <span><a href="/report/english">英文报告</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="wrap3 wrap">
+                                        <span><a href="/product/consulting">咨询</a></span>
+                                        <span><a href="/product/training">培训</a></span>
+                                        <span><a href="/product/benchmark">基准价</a></span>
+                                        <span><a href="/product/dashboard" style="font-size:14px !important;">Dashboard</a></span>
+                                        <span><a href="/product/app" style="font-size:14px !important;">掌握商机APP</a></span>
+                                       
+                                    </div>
+                                    <div class="wrap4 wrap">
+                                        <h2 onclick="location.href='http://e.icis-china.com/infocenter'">特色专题</h2>
+                                        <div class="item-cont">
+                                           
+
+                                                    <span><a href="/InfoCenter/detail?id=1140&typeid=25">2017年欧洲能源市场展望</a></span>
+                                                    <span><a href="/InfoCenter/detail?id=1141&typeid=25">2017年全球化工品市场展望</a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="item4 item">
+                                        <a href="http://e.icis-china.com/product/benchmark">
+                                            <div class="image">
+                                                <img src="/assets/uploads/20161129/2016112913121933161.jpg" alt="" />
+                                                <div class="opac">
+                                                    <div class="text">安迅思估价是安迅思严格遵守 IOSCO-PRA 原则， 并按照安迅思的估价方法论评估得出的价格，它最符合中国市场的情况...</div>
+                                                </div>
+                                            </div>
+                                            <div class="text">
+                                                <h2>交易有价可依，决策从容自信 - 安迅思大宗品基准价</h2>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="item4 item">
+                                        <a href="http://e.icis-china.com/download/detail?id=157&amp;typeid=11">
+                                            <div class="image">
+                                                <img src="/assets/uploads/20170217/2017021717530970598.jpg" alt="" />
+                                                <div class="opac">
+                                                    <div class="text">为您提供月度报告解决方案，帮助您把握未来三个月市场趋势及关键驱动因素，制定产销计划，实时了解进口货源与国内的套利动态，提供期现套保机会及操作思路。</div>
+                                                </div>
+                                            </div>
+                                            <div class="text">
+                                                <h2>《甲醇及下游月度趋势预测报告》面对行业挑战全新升级</h2>
+                                            </div>
+                                        </a>
+                                    </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="ot">
+                        <div class="nav-title"><a href="/download?typeid=0">下载中心</a></div>
+                        <div class="nav-list nav-product nav-download">
+                            <div class="main clear-both">
+                                <div class="item1 item">
+                                    <h2>下载中心</h2>
+                                    <div class="item-cont">
+                                            <span><a href="/download?typeid=8">Data Talk</a></span>
+                                            <span><a href="/download?typeid=9">资料推荐</a></span>
+                                            <span><a href="/download?typeid=10">免费报告和白皮书</a></span>
+                                            <span><a href="/download?typeid=11">样品报告</a></span>
+                                            <span><a href="/download?typeid=12">公司样册</a></span>
+                                            <span><a href="/download?typeid=13">估价及基准价</a></span>
+                                            <span><a href="/download?typeid=14">视频中心</a></span>
+                                        <span class="b-link"><a href="/about/experts">查看安迅思专家团队>></a></span>
+                                    </div>
+                                </div>
+                                    <div class="item4 item">
+                                        <a href="http://e.icis-china.com/download/detail?id=68&amp;typeid=9">
+                                            <div class="image">
+                                                <img src="/assets/uploads/20160810/2016081014471658292.jpg" alt="" />
+                                                <div class="opac">
+                                                    <div class="text">只有把握了供需格局的变化，才能掌握价格走势命脉作出正确的操盘预判...</div>
+                                                </div>
+                                            </div>
+                                            <div class="text">
+                                                <h2>正在发生的未来-安迅思化工产业链供需预判解决方案</h2>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="item4 item">
+                                        <a href="http://e.icis-china.com/download/detail?id=52&amp;typeid=12">
+                                            <div class="image">
+                                                <img src="/assets/uploads/20161129/2016112913100877534.jpg" alt="" />
+                                                <div class="opac">
+                                                    <div class="text">一站式的操作体验，整合了历史价格、新闻、实时供需平衡多个窗口的dashboard可以提供客户前所未有的操作体验...</div>
+                                                </div>
+                                            </div>
+                                            <div class="text">
+                                                <h2>Dashboard速赢决策平台-独有的历史数据，强大的趋势分析</h2>
+                                            </div>
+                                        </a>
+                                    </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="ot">
+                        <div class="nav-title"><a href="/purchase">在线购买</a></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="search-box J-search-box">
+        <div class="main">
+            <div class="search-box-cont">
+                <div class="search-box-wrap">
+                    <label class="sort J-search-sort">
+                        <span class="sort-cur J-sort-cur"><em>新闻中心</em><i class="down"></i><i class="line"></i></span>
+                        <span class="downlist J-search-downlist">
+                            <a href="javascript:;">新闻中心</a>
+                            <a href="javascript:;">下载中心</a>
+                            <a href="javascript:;">在线购买</a>
+                        </span>
+                    </label>
+                    <input id="inputbox" name="inputbox" type="text" value="" />
+                </div>
+                <a class="search-btn" href="javascript:;" onclick="sench(0)">搜索</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="m-header" class="mobile clear-both">
+    <div class="top">
+        <h1 class="logo fl">
+            <a href="/"><img src="/assets/cn/images/m-logo.png" /></a>
+        </h1>
+        <div class="ctrls fr">
+            <ul>
+                <li class="search-ico J-search cur"></li>
+                <li class="member-ico J-member cur"></li>
+                <li class="car-ico J-car cur" ></li>
+                <li class="nav-ico J-nav cur"></li>
+            </ul>
+        </div>
+    </div>
+    <div class="nav">
+        <div class="opac J-nav-opac"></div>
+        <div class="opac J-search-opac"></div>
+        <div class="opac J-member-opac"></div>
+        <div class="search wrapper">
+            <div class="sort J-m-sort">
+                <ul>
+                    <li class="cur"><a href="javascript:;">新闻中心</a><i></i></li>
+                    <li class=""><a href="javascript:;">下载中心</a><i></i></li>
+                    <li class=""><a href="javascript:;">在线购买</a></li>
+                </ul>
+            </div>
+            <input id="searchbox" name="searchbox" type="text" value="" />
+            <a class="btn" href="javascript:;" onclick="sench(1)">搜索</a>
+        </div>
+        <div class="member-nav">
+            <div class="nav-list">
+                <div class="item">
+                    <ul>
+                            <li>
+                                <a class="clear-both" href="/login"><span class="fl">登录</span></a>
+                            </li>
+                            <li>
+                                <a class="clear-both" href="/login/register"><span class="fl">注册新用户</span></a>
+                            </li>
+                        <!--登录后显示下面-->
+                        
+                        <!--登录后显示下面-结束-->
+                    </ul>
+                </div>
+                <div class="item">
+                    <ul>
+                        <li>
+                            <a class="clear-both" href="/member/noPayOrder?id=0"><span class="fl">待支付订单</span><i class="fr">0</i></a>
+                        </li>
+                        <li>
+                            <a class="clear-both" href="/member/noPayOrder?id=1"><span class="fl">已支付订单</span></a>
+                        </li>
+                        <li>
+                            <a class="clear-both" href="/member/noPayOrder?id=2"><span class="fl">已结束订单</span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="item">
+                    <ul>
+                        <li>
+                            <a class="clear-both" href="/member/noPaySubscribe?id=0"><span class="fl">未支付定金的预约</span></a>
+                        </li>
+                        <li>
+                            <a class="clear-both" href="/member/noPaySubscribe?id=1"><span class="fl">已支付定金的预约</span></a>
+                        </li>
+                        <li>
+                            <a class="clear-both" href="/member/noPaySubscribe?id=2"><span class="fl">已续费的预约</span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="item">
+                    <ul>
+                        <li>
+                            <a class="clear-both" href="/member/information"><span class="fl">个人资料</span></a>
+                        </li>
+                        <li>
+                            <a class="clear-both" href="/member/datum"><span class="fl">产品服务资料</span></a>
+                        </li>
+                        <li>
+                            <a class="clear-both" href="/member/safety"><span class="fl">安全设置</span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="item">
+                    <ul>
+                        <li>
+                            <a class="clear-both" href="/member/collect"><span class="fl">新闻收藏</span></a>
+                        </li>
+                        <li>
+                            <a class="clear-both" href="/member/collect"><span class="fl">下载收藏</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <ul class="part1 part">
+            <li>
+                <a href="/">首页</a>
+            </li>
+            <li>
+                <a>化工</a>
+                <ul class="part2 part">
+                    <li>
+                        <a>产业链</a>
+                        <div class="part3 part nav-swiper swiper-container" id="wrapper" style="overflow-y:scroll !important;">
+                            <ul id="scroller">
+                                        <li><a class="ellipsis" href="/chemical?typeid=98">烯烃</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=103">聚烯烃</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=89">芳烃</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=88">苯乙烯及其下游</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=93">甲醇</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=102">化纤</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=92">酚酮</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=101">冰醋酸及其下游</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=100">增塑剂及其上游</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=99">橡胶</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=90">丙烯酸及酯</a></li>
+                                        <li><a class="ellipsis" href="/chemical?typeid=95">聚氨酯</a></li>
+                                <li class="swiper-slide look newlook"><a href="/about/experts">查看安迅思专家团队>></a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <a href="/product/dashboard">Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="/product/app">掌握商机APP</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a>能源</a>
+                <ul class="part2 part">
+                    <li>
+                        <a>产业链</a>
+                        <div class="part3 part ">
+                            <ul style="height: 100%;overflow: scroll;" class="part3_nav">
+                                        <li><a class="ellipsis" href="/energy?typeid=33">原油及炼厂</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=24">成品油</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=25">调油品</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=15">天然气/液化天然气</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=27">基础油</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=22">液化石油气</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=28">沥青</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=29">燃料油及船供油</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=32">橡胶油</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=31">石油焦</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=30">溶剂油</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=35">动力煤</a></li>
+                                        <li><a class="ellipsis" href="/energy?typeid=23">碳排放</a></li>
+                                <li class="look newlook"><a href="/about/experts">查看安迅思专家团队>></a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <a href="/product/dashboard">Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="/product/app">掌握商机APP</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a>新闻中心</a>
+                <div class="part2 part">
+                    <ul>
+                        <li><a href="/news">市场洞察</a></li>
+                        <li><a href="/news/media">媒体报道</a></li>
+                        <li><a href="/news/trends">安迅思动态</a></li>
+                        <li><a href="/news/activity">行业活动</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a>产品和服务</a>
+                <ul class="part2 part">
+                    <li>
+                        <a>资讯</a>
+                        <div class="part3 part">
+                            <ul>
+                                <li class="static"><a href="/information/chemicals">化工资讯</a></li>
+                                <li class="static"><a href="/information/energy">能源资讯</a></li>
+                                <li class="static"><a href="/information/global">国际资讯</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a>报告</a>
+                        <div class="part3 part">
+                            <ul>
+                                <li><a href="/report/">常规报告</a></li>
+                                <li><a href="/report/year">年度报告</a></li>
+                                <li><a href="/report/special">专题报告</a></li>
+                                <li><a href="/report/english">英文报告</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="/product/benchmark">基准价</a>
+                    </li>
+                    <li>
+                        <a href="/product/consulting">咨询</a>
+                    </li>
+                    <li>
+                        <a href="/product/training">培训</a>
+                    </li>
+                    <li>
+                        <a href="/product/dashboard">Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="/product/app">掌握商机APP</a>
+                    </li>
+                    <li>
+                        <a href="/product/methodology">合规与方法论</a>
+                    </li>
+                    <li>
+                        <a href="http://e.icis-china.com/infocenter">特色专题</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a>下载中心</a>
+                <ul class="part2 part">
+                        <li class="static"><a class="ellipsis" href="/download?typeid=8">Data Talk</a></li>
+                        <li class="static"><a class="ellipsis" href="/download?typeid=9">资料推荐</a></li>
+                        <li class="static"><a class="ellipsis" href="/download?typeid=10">免费报告和白皮书</a></li>
+                        <li class="static"><a class="ellipsis" href="/download?typeid=11">样品报告</a></li>
+                        <li class="static"><a class="ellipsis" href="/download?typeid=12">公司样册</a></li>
+                        <li class="static"><a class="ellipsis" href="/download?typeid=13">估价及基准价</a></li>
+                        <li class="static"><a class="ellipsis" href="/download?typeid=14">视频中心</a></li>
+                    <li class="swiper-slide look newlook"><a href="/about/experts">查看安迅思专家团队>></a></li>
+                </ul>
+            </li>
+            <li><a href="/purchase">在线购买</a></li>
+            <li>
+                <a>关于安迅思</a>
+                <ul class="part2 part">
+                    <li><a href="/about">关于我们</a></li>
+                    <li><a href="/about/gm">总经理寄语</a></li>
+                    <li><a href="/about/experts">智囊团</a></li>
+                    <li><a href="/about/join">加入我们</a></li>
+                    <li><a href="/about/contact">联系我们</a></li>
+                </ul>
+            </li>
+            <li><a href="http://www.icis-china.com/Chemease/information/default.aspx">安迅思化工网站</a></li>
+            <li><a href="http://www.icis-china.com/C1/common/entry.aspx">安迅思能源网站</a></li>
+        </ul>
+    </div>
+</div>
+<input type="hidden" value="0" id="loginthis" />
+<script type="text/javascript">
+    function del(e) {
+        var id = $(e).attr("data-id");
+        var price = parseFloat($("#about_" + id).attr("data-money"));
+        var sum = parseInt($("#sum").html());
+        var money = parseFloat($("#money").html());
+        $.get("/api/cn/cart/DeleCart?id=" + id, function (data) {
+            if (data.errcode === 1) {
+                $("#about_" + id).remove();
+                $("#sum").html(sum - 1);
+                if (sum - 1 === 0) {
+                    $("#money").html(0);
+                } else {
+                    $("#money").html((money - price).toFixed(2));
+                }
+
+            } else {
+                newAlert("参数错误!");
+            }
+        });
+    }
+    function sench(type) {
+        var dd = $(".J-search-sort em").html();
+        var str = $("#inputbox").val();
+
+        if (type == 1) {
+            $(".J-m-sort li").each(function myfunction() {
+                if ($(this).attr("class") == "cur") {
+                    dd = $(this).children().html();
+                }
+            });
+            str = $("#searchbox").val();
+        }
+
+        switch (dd) {
+            case "新闻中心":
+                location.href = encodeURI("/Search/Index?id=0&type=1&keyWords=" + str + "");
+                break;
+            case "下载中心":
+                location.href = encodeURI("/Search/Index?id=0&type=0&keyWords=" + str + "");
+                break;
+            case "在线购买":
+                location.href = encodeURI("/Search/Index?id=0&type=2&keyWords=" + str + "");
+                break;
+            default:
+        }
+    }
+
+    function checked() {
+        $.get("/api/cn/cart/AllShoppingCart", function (data) {
+            if (data.errcode === 1) {
+                location.href = "/purchase/check";
+            } else {
+                newAlert("参数错误!");
+            }
+        });
+    }
+
+</script>
+ 
+        
+
+<div id="news-detail" class="detail inside">
+    <div class="crumbs">
+        <div class="main">
+            <a href="/">首页</a> > <a href="/news">新闻中心</a>  >
+ <a href="/news">市场洞察</a> > <span>3月检修集中暂时缓解过剩 但下半年市场压力仍将加剧</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="main clear-both">
+            <div class="article fl">
+                <div class="text-nav nav">
+    <ul id="top_ul" class="clear-both">
+        <li class="ot">
+            <a href="/news">
+                <dl>
+                    <dd>市场洞察</dd>
+                </dl>
+                <i></i>
+            </a>
+        </li>
+        <li class="ot">
+            <a href="/news/media">
+                <dl>
+                    <dd>媒体报道</dd>
+                </dl>
+                <i></i>
+            </a>
+        </li>
+        <li class="ot">
+            <a href="/news/trends">
+                <dl>
+                    <dd>安迅思动态</dd>
+                </dl>
+                <i></i>
+            </a>
+        </li>
+        <li class="ot">
+            <a href="/news/activity">
+                <dl>
+                    <dd>行业活动</dd>
+                </dl>
+            </a>
+        </li>
+    </ul>
+</div>
+
+                <div class="content">
+                    <div class="detail-cont">
+                        <h2 class="title">3月检修集中暂时缓解过剩 但下半年市场压力仍将加剧</h2>
+                        <div class="tips">
+
+                            <span class="date">2017-03-13</span>
+
+
+                            <span class="date">浏览：21</span>
+                        </div>
+                        <div class="editor">
+<p><span style="font-size: 14px; font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; color: rgb(255, 255, 255); background-color: rgb(84, 141, 212);">作者：安迅思—李莉</span></p><p><br style="margin: 0px; padding: 0px;"/></p><p></p><p><span style="font-size: 14px; font-family: 微软雅黑, &#39;Microsoft YaHei&#39;;">ICIS安迅思调研显示，3月份两大集团旗下炼厂检修较为集中，日平均加工负荷环比下滑3.72%。预计3月份两大集团合计原油加工量约3252万吨，日加工量105万吨左右。</span></p><p><br style="margin: 0px; padding: 0px;"/></p><p><span style="font-size: 14px; font-family: 微软雅黑, &#39;Microsoft YaHei&#39;;">从地区来看，3月份各地区的平均日加工负荷均有不同程度的下降，东北地区大连石化即将在3月末进入54天的全厂大检，大连西太则因渣油加氢装置20天检修影响当月加工负荷；华北地区的华北石化也从3月中旬进入全厂检修；此外中石化济南炼厂及九江石化炼油能力也仍处于全厂检修，预计持续到4月初。</span></p><p><br style="margin: 0px; padding: 0px;"/></p><p><span style="font-size: 14px; font-family: 微软雅黑, &#39;Microsoft YaHei&#39;;">预计北方地区炼厂相对集中检修有利于缓解近期汽油市场严重供应过剩的局面，但二季度末随着检修逐渐完成，下半年华南地区惠州、云南两大千万吨级新项目入市，成品油市场竞争又将进一步加剧。</span></p><p><br/></p><p><section data-role="paragraph"><section data-role="outer" label="Powered by 135editor.com"><section><section><section><span style="font-size: 14px; font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; color: rgb(0, 0, 0);">• 转载请注明来自“安迅思”</span></section><p><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0); font-size: 14px; font-family: 微软雅黑, &#39;Microsoft YaHei&#39;;">• 投稿及合作请联系：</span><span style="color: rgb(0, 0, 0); font-family: 微软雅黑, &#39;Microsoft YaHei&#39;; font-size: 14px;">marketing@icis-china.com</span></span></p></section></section></section></section></p>
+                        </div>
+                        <div class="links clear-both">
+                                <div class="prev fl">
+                                    上一篇：<a class="ellipsis" href="/news/detail?id=1161&amp;typeid=15">
+                                        &quot;新加坡裕廊芳烃收购案&quot;之论中国芳烃产业发展机 ...
+                                    </a>
+                                </div>
+                                                                <a class="back" href="/news">返回列表</a>
+
+                                <div class="prev fr">下一篇：<a class="ellipsis" href="/news/detail?id=1159&amp;typeid=15">3月中国炼厂加工负荷回落2.1% 地炼份额上升</a></div>
+                        </div>
+                        <div class="handle clear-both">
+                            <a class="btn-collect fl" href="javascript:;" data-id="1160" onclick="AddCollect(this)"><span>收藏</span></a>
+                            <div class="btns-share bdsharebuttonbox fr">
+                                <span>分享到： </span>
+                                <a class="bds_tsina" data-cmd="tsina" title="分享到新浪微博" href="#"></a>
+                                <a class="bds_weixin" data-cmd="weixin" title="分享到微信" href="#"></a>
+                                <a class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin" href="#"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="com-head clear-both">
+                            <h2 class="fl">相关新闻</h2>
+                            <a href="/Search/List?id=1160&type=1" class="more fr"><span>查看更多+</span></a>
+                        </div>
+                        <div class="com-list">
+                            <ul>
+                                        <li class="clear-both">
+                                            <div class="image fl">
+                                                <a href="/news/detail?id=1159&amp;typeid=15"><img alt="" /></a>
+                                            </div>
+                                            <div class="text">
+                                                <a href="/news/detail?id=1159&amp;typeid=15"><h2 class="ellipsis">3月中国炼厂加工负荷回落2.1% 地炼份额上升</h2></a>
+                                                <p style="height:inherit;" title="ICIS安迅思调研显示，3月份中国炼厂（含主营及地炼）加工总量预计在4650-4700万吨之间，日加工负荷150万吨，环比回落2.1%。两大集团炼厂检修偏多，但地炼加工负荷环比上升，抵消了主营减产的影响。">ICIS安迅思调研显示，3月份中国炼厂（含主营及地炼）加工总量预计在4650-4700万吨之间，日加工负荷150万吨，环比回落2.1%。两大集团炼厂检修偏多，但地炼加工负荷环比上升，抵消了主营减产的影 ...</p>
+                                                <div class="tags">
+                                                                <a href="/Search/Index?id=127&type=1">炼厂</a>
+                                                                <a href="/Search/Index?id=9&type=1">李莉</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="clear-both">
+                                            <div class="image fl">
+                                                <a href="/news/detail?id=1154&amp;typeid=15"><img alt="" /></a>
+                                            </div>
+                                            <div class="text">
+                                                <a href="/news/detail?id=1154&amp;typeid=15"><h2 class="ellipsis">原油成品油价格双承压 主营炼厂继续扮演“现金牛”</h2></a>
+                                                <p style="height:inherit;" title="安迅思综合数据显示，3月上旬，国际原油及国内成品油市场双双承压，国内主营炼厂炼油利润波动不大，仍然处于近年来较好的状态。">安迅思综合数据显示，3月上旬，国际原油及国内成品油市场双双承压，国内主营炼厂炼油利润波动不大，仍然处于近年来较好的状态。</p>
+                                                <div class="tags">
+                                                                <a href="/Search/Index?id=127&type=1">炼厂</a>
+                                                                <a href="/Search/Index?id=38&type=1">原油</a>
+                                                                <a href="/Search/Index?id=9&type=1">李莉</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="clear-both">
+                                            <div class="image fl">
+                                                <a href="/news/detail?id=695&amp;typeid=27"><img alt="" /></a>
+                                            </div>
+                                            <div class="text">
+                                                <a href="/news/detail?id=695&amp;typeid=27"><h2 class="ellipsis">G20峰会期间 华东三家炼厂限产或超100万吨加工能力</h2></a>
+                                                <p style="height:inherit;" title="根据上海市环保局近期引发的关于《G20峰会上海市环境空气质量保障方案》，以及宁波市环保局引发的《G20峰会环境质量保障管控企业清单》，要求G20峰会在杭州召开期间，上海市石化、钢铁和水泥等255家生产企业限产，同时宁波地区相关企业也将停产或限产。">根据上海市环保局近期引发的关于《G20峰会上海市环境空气质量保障方案》，以及宁波市环保局引发的《G20峰会环境质量保障管控企业清单》，要求G20峰会在杭州召开期间，上海市石化、钢铁和水泥等255家生产 ...</p>
+                                                <div class="tags">
+                                                                <a href="/Search/Index?id=127&type=1">炼厂</a>
+                                                                <a href="/Search/Index?id=185&type=1">马琛</a>
+                                                                <a href="/Search/Index?id=9&type=1">李莉</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="aside fr">
+                            <div class="item">
+                                <a href="http://e.icis-china.com/news/detail?id=925&amp;typeid=14" target="_self">
+                                    <div class="image">
+                                        <img src="/assets/uploads/20161019/2016101911214827377.jpg" alt="" />
+                                        <div class="opac">
+                                            <p>作为全球领先的石化市场资讯服务商，安迅思连续第四年成功通过针对其石化市场价格报告业务的独立审计。
+
+ICIS ...</p>
+                                        </div>
+                                    </div>
+                                    <div class="text">
+                                        <h2 class="ellipsis">ICIS安迅思连续四年达标IOSCO价格报告机构原则</h2>
+                                        
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="item">
+                                <a href="http://e.icis-china.com/product/training" target="_self">
+                                    <div class="image">
+                                        <img src="/assets/uploads/20160901/2016090115004748974.jpg" alt="" />
+                                        <div class="opac">
+                                            <p>安迅思培训可为客户提供一对一，一对多的Webinar，公开课，沙龙，企业内训等多种培训形式，承诺为客户提供高质量 ...</p>
+                                        </div>
+                                    </div>
+                                    <div class="text">
+                                        <h2 class="ellipsis">安迅思2016年培训课程计划</h2>
+                                        
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="item">
+                                <a href="http://e.icis-china.com/product/consulting" target="_self">
+                                    <div class="image">
+                                        <img src="/assets/uploads/20160901/2016090115000335794.png" alt="" />
+                                        <div class="opac">
+                                            <p>如何制定有效的企业发展战略？如何调整已有发展战略使其适应市场变化？如何指导基层部门业务方向？</p>
+                                        </div>
+                                    </div>
+                                    <div class="text">
+                                        <h2 class="ellipsis">安迅思能源化工专业咨询</h2>
+                                        
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="item">
+                                <a href="http://e.icis-china.com/download/detail?id=68&amp;typeid=9" target="_self">
+                                    <div class="image">
+                                        <img src="/assets/uploads/20160810/2016081017390054047.jpg" alt="" />
+                                        <div class="opac">
+                                            <p>如何从产业过剩的泥潭中异军突起？如何让化工的小船变成巨轮？行业的声音在呼唤，只有把握了供需格局的变化，才能掌握价 ...</p>
+                                        </div>
+                                    </div>
+                                    <div class="text">
+                                        <h2 class="ellipsis">化工产业链供需预判解决方案</h2>
+                                        
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="item">
+                                <a href="http://e.icis-china.com/download/detail?id=52&amp;typeid=12" target="_self">
+                                    <div class="image">
+                                        <img src="/assets/uploads/20160810/2016081017353889496.jpg" alt="" />
+                                        <div class="opac">
+                                            <p>从价格信息、全球贸易活动到供需信息、即时新闻，安迅思速赢决策平台可以根据用户需求提供独有的工作界面——为您定制化 ...</p>
+                                        </div>
+                                    </div>
+                                    <div class="text">
+                                        <h2 class="ellipsis">Dashboard安迅思速赢决策平台-独有的历史数据，强大的趋势分析</h2>
+                                        
+                                    </div>
+                                </a>
+                            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div id="scroll">
+    <div class="feedback J-feedback"><span class="animate">反馈</span></div>
+    <div class="scroll-ico J-scroll"></div>
+</div>
+<div class="f-popup J-f-popup">
+    <form class="f-popup-box">
+        <div class="f-popup-head clear-both">
+            <h2 class="fl">用户反馈<span>请留下您宝贵的意见</span></h2>
+            <div class="close fr"></div>
+        </div>
+        <div class="f-popup-cont">
+            <div class="form-grp">
+                <label>您的姓名<i>*</i></label>
+                <input id="userName" name="userName" type="text" value="" />
+            </div>
+            <div class="form-grp">
+                <label>联系电话<i>*</i></label>
+                <input id="userTel" name="userTel" type="text" value="" />
+            </div>
+            <div class="form-grp">
+                <label>电子邮箱<i>*</i></label>
+                <input id="userMail" name="userMail" type="text" value="" />
+            </div>
+            <div class="form-grp">
+                <label>公司名称<i>*</i></label>
+                <input id="userCompany" name="userCompany" type="text" value="" />
+            </div>
+            <div class="form-grp">
+                <label>反馈内容<i>*</i></label>
+                <textarea name="userFeedback" id="userFeedback"  placeholder="请输入200字以内"></textarea>
+            </div>
+            <div class="form-grp">
+                <input class="btn animate" type="button" value="提交" onclick="but_tj()" /> 
+            </div>
+        </div>
+    </form>
+</div>
+<img src="/assets/cn/images/index/icis-logo.jpg" width="0" height="0" />
+<div id="footer">
+    <div class="main clear-both">
+        <div class="item1 item">
+            <div class="logo"></div>
+            <div class="tel mobile"><a href="tel:4007-200-222">4007-200-222</a></div>
+            <p>沪ICP备15028192号-1/沪ICP备10218721号-4<br/>
+            	<img src="/assets/cn/images/PublicSecurityRecord.png" style="width: 16px;height: 16px;display: inline-block !important;margin-right: 5px;vertical-align: sub;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010502000699" target="_blank" style="color: #999;" class="linkk">沪公网安备 31010502000699号</a>
+            	<br>© 2016 易贸资讯（上海）有限公司版权所有</p>
+            <i></i>
+        </div>
+        <div class="item2 item">
+            <ul>
+                <li class="one">
+                    <h2>关于安迅思</h2>
+                    <div class="item-link">
+                        <span><a href="/about">关于我们</a></span>
+                        <span><a href="/about/gm">总经理寄语</a></span>
+                        <span><a href="/about/experts">智囊团</a></span>
+                        <span><a href="/about/join">加入我们</a></span>
+                        <span><a href="/about/contact">联系我们</a></span>
+                    </div>
+                </li>
+                <li>
+                    <h2>新闻中心</h2>
+                    <div class="item-link">
+                        <span><a href="/news">市场洞察</a></span>
+                        <span><a href="/news/media">媒体报道</a></span>
+                        <span><a href="/news/activity">行业活动</a></span>
+                        <span><a href="/news/trends">安迅思动态</a></span>
+                    </div>
+                </li>
+                <li>
+                    <h2>快速链接</h2>
+                    <div class="item-link">
+                        <span><a href="/download?typeid=0">下载中心</a></span>
+                        <span><a href="/purchase/">在线购买</a></span>
+                        <span><a href="/product/consulting">咨询</a></span>
+                        <span><a href="/product/training">培训</a></span>
+                        <span style="display: none;"><a href="javascript:;">购买须知</a></span>
+                        <span><a href="/product/methodology">合规与方法论</a></span>
+                    </div>
+                </li>
+            </ul>
+            <i></i>
+        </div>
+        <div class="item3 item">
+            <div class="tel"></div>
+            <div class="share">
+                <ul class="clear-both">
+                    <li class="one"><a href="http://weibo.com/icischina" target="_blank"></a></li>
+                    <li class="two J-share-two">
+                        <a href="javascript:;" data-cmd="weixin" title="分享到微信"></a>
+                        <div class="qrcode J-qrcode">
+                            <div class="qr-wrap">
+                                <h3>关注安迅思微信公众号：icis_china</h3>
+                                <div class="qr-cont"><img src="/assets/cn/images/qrcode.jpg" /></div>
+                                <div class="qr-bottom">了解圈内更多事，<br />认识圈内更多人</div>
+                                <div class="pointer"></div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="three"><a href="http://www.linkedin.com/company/%E5%AE%89%E8%BF%85%E6%80%9D?trk=biz-companies-cym" target="_blank"></a></li>
+                </ul>
+            </div>
+            <p><a href="/law/">法律声明</a> | <a href="/privacy">隐私保护</a> | <a href="/sale/">订阅条款</a></p>
+            <i></i>
+        </div>
+    </div>
+</div>
+<style>
+	.linkk:hover{    color: #fdba2f;text-decoration: underline;}
+</style>
+<script type="text/javascript">
+    function but_tj() {
+        var userName = $("#userName").val();
+        var userTel = $("#userTel").val();
+        var userMail = $("#userMail").val();
+        var userCompany = $("#userCompany").val();
+        var userFeedback = $("#userFeedback").val();
+        if (feedbackCheck()) {
+            $.get("/api/cn/feed/AddFeedback?name=" + userName + "&tel=" + userTel + "&emal=" + userMail + "&comp=" + userCompany + "&count=" + userFeedback + "", function (data) {
+                if (data.errcode === 1) {
+                    alertUrl("留言成功！", location.href);
+                } else {
+                    newAlert("参数错误!");
+                }
+            });
+        }
+    }
+</script>
+
+
+    </div>
+    <script src="/assets/cn/scripts/jquery-1.10.2.min.js"></script>
+    <!--[if gt IE 8]>
+    <script src="/assets/cn/scripts/swiper.jquery.min.js"></script>
+    <![endif]-->
+    <!--[if !IE]><!--> 
+    <script src="/assets/cn/scripts/swiper.jquery.min.js"></script>
+     <!--<![endif]-->
+    <script src="/assets/cn/scripts/fun.js"></script>
+    <!--GA Code -->
+
+
+    <script src="/assets/cn/scripts/common?v=Lyy6C0MZK34k7F4e7a6CYAS42mK4nfj2Ws8zMCWK8bM1"></script>
+
+    
+    <script type="text/javascript">
+        $(function () {
+            var tid = "15";
+            switch (tid) {
+                case "16":
+                    $("#top_ul li:eq(0)").attr("class", "cur");
+                    break;
+                case "15":
+                    $("#top_ul li:eq(0)").attr("class", "cur");
+                    break;
+                case "13":
+                    $("#top_ul li:eq(1)").attr("class", "cur");
+                    break;
+                case "14":
+                    $("#top_ul li:eq(2)").attr("class", "cur");
+                    break;
+                case "17":
+                    $("#top_ul li:eq(3)").attr("class", "cur");
+                    break;
+                default:
+            }
+        });
+
+        function AddCollect(e) {
+            var id = $(e).attr("data-id");
+            $.get("/api/cn/about/AddCollect?id=" + id + "&type=0", function (data) {
+                if (data.errcode === 1) {
+                    newAlert("收藏成功!");
+                } else if (data.Flag == "Login") {
+                    newAlert("请您先登录，再进行收藏！");
+
+                } else {
+                    newAlert("请您先登录，再进行收藏！");
+                }
+            });
+        }
+    </script>
+
+
+<script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+  m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-19839121-5', 'auto');
+        ga('send', 'pageview');
+
+</script>
+<!-- End -->
+<!-- Baidu Analytics Start -->
+<script type="text/javascript">
+        var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F51828e9bca7c0f8121b5a172c9096479' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<!-- Baidu Analytics End -->
+</body>
+</html>

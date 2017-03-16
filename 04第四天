@@ -1,0 +1,169 @@
+第四天
+
+今天来做一个比较完整的crawler,前面的爬虫只是爬取一个页面，我们希望的是爬虫能够在一系列的种子页面中分析出超链接，然后自动爬取需要的内容，最后能够存储下来。
+比如我们用安迅思 ICIS的市场洞察栏目为例：http://e.icis-china.com/news?page=1
+
+<div class="com-list">
+                        <ul>
+                                    <li class="up clear-both">
+                                        <div class="image fl">
+                                            <a href="/news/detail?id=1162&amp;typeid=15">
+                                                <img src="/assets/uploads/20170315/201703151438529402.jpg" alt="" />
+                                            </a>
+                                        </div>
+                                        <div class="text">
+                                            <a href="/news/detail?id=1162&amp;typeid=15">
+                                                <h2 class="ellipsis">萨德事件引发市场担忧 韩国进口聚丙烯预计受冷</h2>
+                                            </a>
+                                            <div class="date tips">2017-03-15</div>
+                                            <p>日前，受“萨德”事件影响不断发酵，市场人士担忧韩国进口料也将受贸易壁垒增加，有趋少形势。某韩国供应商证实了这种担忧的存在，表示最近货物在过海关查验的频率有所增高，甚至出 ...</p>
+                                            <div class="tags">
+                                                            <a href="/Search/Index?id=262&type=1">聚丙烯</a>
+                                                            <a href="/Search/Index?id=319&type=1">薛艳君</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="clear-both">
+                                        <div class="image fl">
+                                            <a href="/news/detail?id=1163&amp;typeid=15">
+                                                <img alt="" />
+                                            </a>
+                                        </div>
+                                        <div class="text">
+                                            <a href="/news/detail?id=1163&amp;typeid=15">
+                                                <h2 class="ellipsis">美对四国丁苯胶反倾销 暂难改变全球贸易流向</h2>
+                                            </a>
+                                            <div class="date tips">2017-03-15</div>
+                                            <p>美对四国丁苯胶反倾销 暂难改变全球贸易流向</p>
+                                            <div class="tags">
+                                                            <a href="/Search/Index?id=316&type=1">丁苯</a>
+                                                            <a href="/Search/Index?id=20&type=1">橡胶</a>
+                                                            <a href="/Search/Index?id=167&type=1">孙黎佳</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="clear-both">
+                                        <div class="image fl">
+                                            <a href="/news/detail?id=1161&amp;typeid=15">
+                                                <img src="/assets/uploads/20170313/2017031316272574212.jpg" alt="" />
+                                            </a>
+                                        </div>
+                                        <div class="text">
+                                            <a href="/news/detail?id=1161&amp;typeid=15">
+                                                <h2 class="ellipsis">&quot;新加坡裕廊芳烃收购案&quot;之论中国芳烃产业发展机遇</h2>
+                                            </a>
+                                            <div class="date tips">2017-03-13</div>
+                                            <p>新加坡裕廊芳烃集团（Jurong Aromatics Corporation，JAC）位于新加坡裕廊岛，占地58公顷，总耗资24亿美元（34亿新元），包括一套凝析油分离 ...</p>
+                                            <div class="tags">
+                                                            <a href="/Search/Index?id=214&type=1">芳烃</a>
+                                                            <a href="/Search/Index?id=89&type=1">PTA</a>
+                                                            <a href="/Search/Index?id=88&type=1">PX</a>
+                                                            <a href="/Search/Index?id=57&type=1">纯苯</a>
+                                                            <a href="/Search/Index?id=135&type=1">邬芳</a>
+                                            </div>
+                                        </div>
+                                    </li>
+ 
+ 这个部分是它的新闻列表，/news/detail?id=1162&amp;typeid=15 这样的超链接就是每个新闻的链接
+ 代码如下：
+ 
+ /* 2017.3.16 Node.JS crawler by alanfoxye*/
+
+var myRequest = require('request')
+var myCheerio = require('cheerio')
+var myIconv = require('iconv-lite')
+require('date-utils');
+var fs = require('fs');
+//var async = require('async');
+
+//把所有的source相关字符串和jquery格式化字符串集中，准备后期用数据库进行配置，注意用\"转义字符串中的"
+
+var source_name = "安迅思 ICIS";
+var domain = 'http://e.icis-china.com'
+var myEncoding = "utf-8"
+var seedURLs = ['http://e.icis-china.com/news?page=1', 'http://e.icis-china.com/news?page=2'];
+
+var seedURL_format = "$('.com-list>ul>li>div[class=\"text\"]>a')";
+var keywords_format = " $('meta[name=\"keywords\"]').eq(1).attr(\"content\")";
+var title_format = "$('title').text()";
+var date_format = "$('span[class=\"date\"]').eq(0).text()";
+var author_format = "$('.editor>p').eq(0).text()";
+var content_format = "$('.editor').text()";
+
+var myURL_reg = 'news/detail?id='
+
+//防止网站屏蔽我们的爬虫
+var headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36'
+}
+
+//request模块异步fetch url
+function request(url, callback) {
+    var options = {
+        url: url,
+        encoding: null,
+        //proxy: 'http://x.x.x.x:8080',
+        headers: headers
+    }
+    myRequest(options, callback)
+}
+
+//遍历所有seedURLs
+seedURLs.forEach(function (myseedURL,index) {
+    //爬取seedURL    
+    request(myseedURL, function (err, res, body) {
+
+        //用iconv转换编码
+        var html = myIconv.decode(body, myEncoding);
+        //console.log(html);
+
+        //准备用cheerio解析html
+        var $ = myCheerio.load(html, { decodeEntities: true });
+
+        //具体新闻url的列表
+        var news_urls = [];
+
+        //从seedURL页面获取所有新闻的url列表所处的html块
+        eval(seedURL_format).each(function (i, e) {
+            //得到具体新闻url
+            var myURL = domain + $(e).attr("href");
+            console.log(myURL);
+            //console.log(e);
+
+            //获取具体新闻页，注意node.js的异步模式，不保证seedurl或新闻url的执行次序！
+            request(myURL, function (err, res, body) {
+                //用iconv转换编码
+                var html_news = myIconv.decode(body, myEncoding);
+                //console.log(html_news);
+
+                //准备用cheerio解析html_news
+                var $ = myCheerio.load(html_news, { decodeEntities: true });               
+
+                //动态执行format字符串，构建json对象准备写入文件或数据库
+                var fetch = {};
+                fetch.encoding = myEncoding;  //编码
+                fetch.keywords = eval(keywords_format);  //关键词
+                fetch.title = eval(title_format);  //标题
+                fetch.date = eval(date_format);    //刊登日期            
+                fetch.author = eval(author_format);  //作者
+                fetch.content = eval(content_format).replace("\r\n"+fetch.author, "");  //内容,是否要去掉作者信息自行决定
+                fetch.author = fetch.author.replace("作者：", "");   //作者格式修改，去掉前面的"作者："
+                fetch.crawltime = (new Date()).toFormat("YYYY-MM-DD HH24:MI:SS");  //爬取时间
+
+                console.log(fetch);               
+                
+                //构建存储json的文件名
+                var filename = source_name + "_" + index + "_" + i + "_" + (new Date()).toFormat("YYYY-MM-DD") + ".json";
+                //存储json
+                fs.writeFileSync(filename, JSON.stringify(fetch));
+            })
+        });        
+        
+    })
+})
+
+需要安装 npm install fs，用于写json文件。代码用了最原始的嵌套循环
+seedURLs.forEach(function (myseedURL,index)和eval(seedURL_format).each(function (i, e)用于遍历种子列表和新闻列表
+
+代码还用到了javascript动态执行的能力，把所有的jquery格式化字符串集中在最前面的变量中，用eval(str)执行，后续可以把这些字符串存在数据库中进行配置。
+ 

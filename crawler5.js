@@ -153,7 +153,7 @@ seedURLs.forEach(function (myseedURL, index) {
                     console.log('INSERT ID:', vals);
                 });
 
-                sleep(5000); //每爬完1个页面休息5秒钟再爬，防止被网站黑名单
+                //sleep(5000); //每爬完1个页面休息5秒钟再爬，防止被网站黑名单，有问题！
             })
         });
     })

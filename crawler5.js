@@ -22,7 +22,6 @@ var author_format = "";  //没有author就用source_name代替
 var content_format = "$('.hq_contet>dd').eq(1).text()";
 
 var myURL_reg = 'news/detail?id=';
-var allfetches = [];
 
 //防止网站屏蔽我们的爬虫
 var headers = {

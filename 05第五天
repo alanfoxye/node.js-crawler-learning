@@ -1,7 +1,7 @@
 第五天
 之前crawler产生的数据存储在json文件中，今天我们把数据存储到数据库里。选择任意主流数据库，oracle,sql-server,mysql,redis,sqlite,mongodb等均可。
 考虑并发读写性能要求并不高，采用一般关系型数据库均可，我们以开源免费的mysql为例。
-首先准备一个mysql server，简单加三个表：fetches表做所有的新闻存储表，sources表做所有数据源配置表（暂不用），users表做用户登陆账户表（暂不用）。
+首先准备一个mysql server，添加数据库crawler，在库里简单加三个表：fetches表做所有的新闻存储表，sources表做所有数据源配置表（暂不用），users表做用户登陆账户表（暂不用）。
 
 CREATE TABLE `fetches` (
   `id_fetches` int(11) NOT NULL,
@@ -67,4 +67,8 @@ connection.query('select * from `fetches`', function(err, rows, fields) {
 });
 //关闭连接
 connection.end();
+
+我们以华夏化工网为例，http://www.hxchem.net/，编码可以看到是gb2312,找到新闻种子页面http://hxchem.net/news.php?page=0&&turn_page=
+
+在代码中我们添加了错误捕捉，加入简单的超时停止机制和抓取限速的机制，使得爬虫工作更稳定
 

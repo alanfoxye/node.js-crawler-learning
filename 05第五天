@@ -129,7 +129,7 @@ var mysql=require('./lib/mysql.js')
 //把所有的source相关字符串和jquery格式化字符串集中，准备后期用数据库进行配置，注意用\"转义字符串中的"
 
 var source_name = "华夏化工网";
-var domain = 'http://www.hxchem.net/' //有没有/号很重要，要看newsurl最前面本身有没有/
+var domain = 'http://www.hxchem.net/' 
 var myEncoding = "gb2312"
 var seedURLs = ['http://hxchem.net/news.php?page=0&&turn_page='];//, 'http://hxchem.net/news.php?page=1&&turn_page=', 'http://hxchem.net/news.php?page=2&&turn_page='];
 

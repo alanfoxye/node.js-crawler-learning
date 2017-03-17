@@ -1,0 +1,51 @@
+第五天
+之前crawler产生的数据存储在json文件中，今天我们把数据存储到数据库里。选择任意主流数据库，oracle,sql-server,mysql,redis,sqlite,mongodb等均可。
+考虑并发读写性能要求并不高，采用一般关系型数据库均可，我们以开源免费的mysql为例。
+首先准备一个mysql server，简单加三个表：fetches表做所有的新闻存储表，sources表做所有数据源配置表（暂不用），users表做用户登陆账户表（暂不用）。
+
+CREATE TABLE `fetches` (
+  `id_fetches` int(11) NOT NULL,
+  `url` varchar(200) DEFAULT NULL,
+  `source_name` varchar(200) DEFAULT NULL,
+  `source_encoding` varchar(45) DEFAULT NULL,
+  `title` varchar(200) DEFAULT NULL,
+  `keywords` varchar(200) DEFAULT NULL,
+  `author` varchar(200) DEFAULT NULL,
+  `publish_date` date DEFAULT NULL,
+  `crawltime` datetime DEFAULT NULL,
+  `content` longtext,
+  `createtime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_fetches`),
+  UNIQUE KEY `id_fetches_UNIQUE` (`id_fetches`),
+  UNIQUE KEY `url_UNIQUE` (`url`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `sources` (
+  `id_sources` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  `domain` varchar(200) DEFAULT NULL,
+  `encoding` varchar(45) DEFAULT NULL,
+  `seedurls` mediumtext,
+  `seedurl_format` varchar(200) DEFAULT NULL,
+  `type` varchar(45) DEFAULT NULL,
+  `impact` int(11) DEFAULT NULL,
+  `createtime` datetime DEFAULT CURRENT_TIMESTAMP,
+  `title_format` varchar(200) DEFAULT NULL,
+  `keywords_format` varchar(200) DEFAULT NULL,
+  `date_format` varchar(200) DEFAULT NULL,
+  `author_format` varchar(200) DEFAULT NULL,
+  `content_format` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id_sources`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `users` (
+  `id_users` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `pass` varchar(45) DEFAULT NULL,
+  `desc` varchar(45) DEFAULT NULL,
+  `previlige` varchar(45) DEFAULT NULL,
+  `createtime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_users`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

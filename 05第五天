@@ -48,4 +48,23 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id_users`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+添加node.js的mysql模块： npm install mysql，用以下方式连接数据库
+
+//连接数据库
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host: '数据库地址如:localhost',
+    user: '数据库用户名',
+    password: '密码',
+    database:'数据库名'
+});
+
+connection.connect();
+//查询
+connection.query('select * from `fetches`', function(err, rows, fields) {
+    if (err) throw err;
+    console.log('查询结果为: ', rows);
+});
+//关闭连接
+connection.end();
 

@@ -16,5 +16,7 @@ node.js天生异步的机制让很多操作很高效，事件和回调函数使�
 所以我们修改了代码，用在第二层上加setTimeout(func{},3000*i)的方式，读取每个页面暂停3秒。（考虑一下为什么*i）
 
 对于一个crawler来说需要定时去爬取页面，因此我们引入node-schedule模块, npm install node-schedule, 以天天化工网为例，每天10点和22点自动爬取页面，
-代码如下：
+代码如crawler6.
 
+为保持node.js程序稳定运行，我们采用forever模块，全局安装，npm install -g forever, 然后执行forever start crawler6.js开始保持程序运行。
+用forever stop crawler6.js 停止，forever list查看，在用户文件夹的.forever文件夹中可以查看日志。

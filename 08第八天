@@ -1,0 +1,70 @@
+第八天
+前几天的crawler用forever保持运行一段时间后，数据库里就有了一批数据，我们用node.js express搭建一个简单的网站，输出显示这些爬下来的数据：
+
+创建一个新文件夹node_web,在里面创建一个server1.js
+
+var express = require('express');
+var mysql = require('./lib/mysql.js')
+
+var app = express();
+
+app.use(express.static('public'));
+
+app.get('/index.htm', function (req, res) {
+    res.sendFile(__dirname + "/" + "index.htm");
+})
+
+app.get('/process_get', function (req, res) {
+
+    //// 输出 JSON 格式
+    response = {};
+   
+    //sql insert字符串和参数，尽量使用参数方式不用字符串拼接方式
+    var fetchSql = 'select url,source_name,source_encoding,title,keywords,author,publish_date,crawltime,content from fetches where source_name=? and publish_date=?';
+    var fetchSql_Params = [req.query.source_name, req.query.publish_date];
+
+    //执行sql，数据库中fetch表里的url属性是unique的，不把重复的url内容写入数据库
+    mysql.query(fetchSql, fetchSql_Params, function (err, result, fields) {
+        //console.log(err);
+        //console.log('result:', result);
+        response = result;
+
+        console.log(response);
+
+        res.end(JSON.stringify(response));
+    });
+   
+})
+
+var server = app.listen(8081, function () {
+
+    var host = server.address().address
+    var port = server.address().port
+
+    console.log("应用实例，访问地址为 http://%s:%s", host, port)
+
+})
+
+看到有两个依赖项，express需要用npm install express安装，mysql.js可以直接用我们crawler之前用的代码，同样放在lib文件夹里
+这一句app.use(express.static('public'));指明了这个简单网站的根目录是当前路径里的public文件夹，创建该文件夹
+
+在这个文件夹里创建一个index.html :
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+</head>
+    <body>
+        <form action="/process_get" method="GET" charset="utf-8" >
+            <p>
+                源名称: <input type="text" name="source_name">  <br>
+
+                日期（请用2017/3/17的形式）: <input type="text" name="publish_date">
+            <p>
+                <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>
+
+此时在文件夹里执行node server1.js,显示：应用实例，访问地址为 http://:::8081
+在浏览器里输入http://127.0.0.1:8081 可以打开index页面，输入要查询的数据源名称和发布时间（例如华夏化工网和2017/3/17），就可以得到查询结果

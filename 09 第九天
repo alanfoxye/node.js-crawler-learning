@@ -1,0 +1,26 @@
+第九天
+
+前面的爬虫部分已经基本成型了，光有爬虫不能成为一个完整的搜索引擎，为方便中文分词全文检索和各种复杂查询以及形成报表，后面我们来尝试用node.js操作
+ElasticSearch和Kibana，形成一个较为完整的行业搜索引擎。
+
+elasticsearch是一个基于lucene的全文检索引擎，索引采用倒排方式。由于不用索引缺失字段，加上追加式增加记录，因此数据建倒排据时性能很强，
+另外查询时候是进行倒排链的交集并集计算，也是非常高效。
+kibana是专门用来查看ElasticSearch内容的工具，并且可以图形化，是一个用于ElasticSearch分析和查询的仪表盘。这两个工具都是开源免费的。
+
+首先在我们部署爬虫的机器上安装elasticsearch，我们使用了一台Windows机器，在事先安装好JAVA JDK的情况下下载 ：
+https://www.elastic.co/downloads/elasticsearch中的zip
+用管理员运行其中的bin\elasticsearch.bat，在浏览器中输入：http://localhost:9200/
+显示如下就正常安装了：
+{
+  "name" : "RdMK__C",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "s_yGmFntReGEzhyH0kEa9w",
+  "version" : {
+    "number" : "5.2.2",
+    "build_hash" : "f9d9b74",
+    "build_date" : "2017-02-24T17:26:45.835Z",
+    "build_snapshot" : false,
+    "lucene_version" : "6.4.1"
+  },
+  "tagline" : "You Know, for Search"
+}

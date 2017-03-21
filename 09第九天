@@ -29,3 +29,65 @@ https://www.elastic.co/downloads/elasticsearch中的zip
  解压，如果ElasticSearch不是装在本机的9200口，修改config/kibana.yml里的ElasticSearch url，然后执行bin/kibana.bat
  在浏览器中输入：http://localhost:5601/
  就可以看到kibana的界面
+ 
+我们测试一下把数据插入elasticsearch，在E:\node_crawl里新建一个文件elasticsearch.js
+
+http = require('http');
+stringify = require('querystring').stringify;
+
+exports.indexDocument = function(document) {
+
+
+    var data = JSON.stringify(document);
+    //data = document;
+
+    var options = {
+    host: 'localhost',  //修改IP
+    port: '9200',       //修改端口
+    path: 'crawler/fetches',   //index对应数据库，type对应数据表，相当于新建一个crawler库的fetches表
+    method: 'POST'
+    };
+
+    var request = http.request(options, function(res) {
+                   console.log('STATUS: ' + res.statusCode);
+                   console.log('HEADERS: ' + JSON.stringify(res.headers));
+                   res.setEncoding('utf8');
+                   res.on('data', function (response) {
+                          console.log('response: ' + response);
+                      });
+
+                   });
+
+    console.log('data=('+data+')');
+    request.write(data);
+    request.end();
+}
+再创建一个test.js
+completeMsg = {"url":"http://www.hxchem.net/newsdetail168046.html","source_name":"华夏化工网","source_encoding":"gb2312","title":"信义玻璃集团在马六甲州承建矿物码头","keywords":"华夏化工网","author":"华夏化工网","publish_date":"2017-03-19T16:00:00.000Z","crawltime":"2017-03-20T19:00:01.000Z","content":"  　　中国信义玻璃集团计划不久后在马来西亚马六甲州投资承建属于该企业的矿物码头，以减低成本。马六甲州首席部长依德利斯哈仑出席信义玻璃与马六甲州发展机构签约购地仪式时说，该码头将承建在旺梨至双溪南眉之间的适当地点。目前信义玻璃通过陆路，由霹雳和登嘉楼输入原料，并通过巴生港口出口成品。\r\n　　依德利斯哈仑表示，信义玻璃首期投入了9亿马币投资，第二期附加9亿马币，总共18亿马币的投资额成为马六甲州力拔加央工业区最大的投资者。信义玻璃首期占地90亩的厂房已投入操作生产，日产2100吨玻璃外销；第二期附加投资的土地面积是93亩，预定明年第一季度投产，日产2000吨玻璃。第二期投资一旦投产，将成为东南亚最大的玻璃生产商。\r\n　　信义玻璃执行董事兼行政总裁董清世说，信义玻璃希望与马六甲州政府共同发展重工业，推动马六甲州制造业发展。作为一家国际玻璃制造公司，其产品已销售至世界150个国家和地区。2015年8月1日在马六甲首期投资动工以来，该公司感受到马六甲州政府的工作效率和对企业的关心。尽管落户马六甲两年，但已有第二期计划和附加投资，希望未来有更多项目在此落实。\r\n "};
+require('./elasticsearch').indexDocument(completeMsg);
+
+E:\node_crawler\的dos窗口下安装 npm install elasticsearch --save
+再执行node test.js 得到如下结果：说明写入elasticsearch成功
+
+data=({"url":"http://www.hxchem.net/newsdetail168046.html","source_name":"华夏化
+工网","source_encoding":"gb2312","title":"信义玻璃集团在马六甲州承建矿物码头","k
+eywords":"华夏化工网","author":"华夏化工网","publish_date":"2017-03-19T16:00:00.
+000Z","crawltime":"2017-03-20T19:00:01.000Z","content":"  　　中国信义玻璃集团计
+划不久后在马来西亚马六甲州投资承建属于该企业的矿物码头，以减低成本。马六甲州首席
+部长依德利斯哈仑出席信义玻璃与马六甲州发展机构签约购地仪式时说，该码头将承建在旺
+梨至双溪南眉之间的适当地点。目前信义玻璃通过陆路，由霹雳和登嘉楼输入原料，并通过
+巴生港口出口成品。\r\n　　依德利斯哈仑表示，信义玻璃首期投入了9亿马币投资，第二
+期附加9亿马币，总共18亿马币的投资额成为马六甲州力拔加央工业区最大的投资者。信义
+玻璃首期占地90亩的厂房已投入操作生产，日产2100吨玻璃外销；第二期附加投资的土地面
+积是93亩，预定明年第一季度投产，日产2000吨玻璃。第二期投资一旦投产，将成为东南亚
+最大的玻璃生产商。\r\n　　信义玻璃执行董事兼行政总裁董清世说，信义玻璃希望与马六
+甲州政府共同发展重工业，推动马六甲州制造业发展。作为一家国际玻璃制造公司，其产品
+已销售至世界150个国家和地区。2015年8月1日在马六甲首期投资动工以来，该公司感受到
+马六甲州政府的工作效率和对企业的关心。尽管落户马六甲两年，但已有第二期计划和附加
+投资，希望未来有更多项目在此落实。\r\n "})
+STATUS: 201
+HEADERS: {"location":"/crawler/fetches/AVrvV72jTdJJ7Mf0igrm","content-type":"app
+lication/json; charset=UTF-8","content-length":"162"}
+response: {"_index":"crawler","_type":"fetches","_id":"AVrvV72jTdJJ7Mf0igrm","_v
+ersion":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"cr
+eated":true}

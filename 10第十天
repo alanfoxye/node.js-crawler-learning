@@ -19,6 +19,14 @@ GET _search
     "match": {"title":"陶氏"}
   }
 }
+比如作者字段里有“传声”的记录，
+GET _search
+{
+  "query": {
+    "match": {"author":"传声"}
+  }
+}
+
 此外kibana还提供了多种图表显示，示例见：http://180.168.42.231:5601/，存入了四个crawler数据源
 （ 中塑资讯 天天化工网 华夏化工网 安迅思 ICIS）的最新信息
 

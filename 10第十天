@@ -1,6 +1,6 @@
 第十天
 
-安装好elasticsearch+kibana后，我们改造crawler，在写完mysql数据之后再往es里写爬取好的数据，见crawler10.js，修改了一些bug。
+安装好elasticsearch+kibana后，我们改造crawler，在写完mysql数据之后再往es里写爬取好的数据，见crawler8.js，修改了一些bug。
 
 下载curl.exe可以直接操作es,比如删除某一条记录
 curl -XDELETE "http://localhost:9200/crawler/fethces/******" 可删除id='*******'的记录
@@ -22,7 +22,7 @@ GET _search
 此外kibana还提供了多种图表显示，示例见：http://180.168.42.231:5601/，存入了四个crawler数据源
 （ 中塑资讯 天天化工网 华夏化工网 安迅思 ICIS）的最新信息
 
-以crawler10作为模板，我们现在在forever list中跑了以上四个数据源的crawler.
+以crawler8作为模板，我们现在在forever list中跑了以上四个数据源的crawler,代码如下：
 
 /* 2017.3.22 Node.JS crawler by alanfoxye*/
 

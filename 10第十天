@@ -26,6 +26,11 @@ GET _search
     "match": {"author":"传声"}
   }
 }
+GET /crawler/fetches/_search?pretty  
+{
+  "query": { "query_string": {"default_field":"source_name",
+            "query":"(腾 AND 讯)"}  }
+}
 
 此外kibana还提供了多种图表显示，示例见：http://180.168.42.231:5601/，存入了四个crawler数据源
 （ 中塑资讯 天天化工网 华夏化工网 安迅思 ICIS）的最新信息
